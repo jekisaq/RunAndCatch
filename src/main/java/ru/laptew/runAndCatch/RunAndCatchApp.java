@@ -3,6 +3,7 @@ package ru.laptew.runAndCatch;
 import com.almasb.fxgl.annotation.OnUserAction;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
+import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.GameEntity;
 import com.almasb.fxgl.input.InputMapping;
 import com.almasb.fxgl.service.Input;
@@ -10,8 +11,8 @@ import com.almasb.fxgl.settings.GameSettings;
 import javafx.scene.input.KeyCode;
 
 public class RunAndCatchApp extends GameApplication {
-    private CharacterControl playerControl;
-    private GameEntity player;
+    private CharacterControl playerControl, enemyControl;
+    private GameEntity player, enemy;
 
     @Override
     protected void initSettings(GameSettings gameSettings) {
@@ -58,12 +59,20 @@ public class RunAndCatchApp extends GameApplication {
     @Override
     protected void initGame() {
 
+        getPhysicsWorld().setGravity(0, 0);
+        getGameWorld().addEntity(Entities.makeScreenBounds(40));
         spawnPlayer();
+        spawnEnemy();
     }
 
     private void spawnPlayer() {
-        player = (GameEntity) getGameWorld().spawn("Character", getWidth() / 2 - 20, getHeight() - 40);
+        player = (GameEntity) getGameWorld().spawn("Character", getWidth() / 2 - getWidth() / 4, getHeight() / 2);
         playerControl = player.getControlUnsafe(CharacterControl.class);
+    }
+
+    private void spawnEnemy() {
+        enemy = (GameEntity) getGameWorld().spawn("Character", getWidth() / 2 + getWidth() / 4, getHeight() / 2);
+        enemyControl = enemy.getControlUnsafe(CharacterControl.class);
     }
 
     public static void main(String[] args) {

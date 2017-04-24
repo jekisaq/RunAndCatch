@@ -1,6 +1,9 @@
 
-/runAndCatch.iml
+RunAndCatch.iml
 /.idea/
 /logs/
 /system/
 /target/
+dependency-reduced-pom.xml
+profiles/
+src/test/
