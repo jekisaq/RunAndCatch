@@ -32,7 +32,7 @@ public class RunAndCatchFactory implements EntityFactory {
                 .from(data)
                 .type(RunAndCatchType.CHARACTER)
                 .with(new CollidableComponent(true))
-                .with(physics)
+                //.with(physics)
                 .with(new CharacterControl())
                 .build();
 

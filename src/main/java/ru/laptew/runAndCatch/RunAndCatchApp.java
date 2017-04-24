@@ -1,19 +1,17 @@
 package ru.laptew.runAndCatch;
 
+import com.almasb.fxgl.annotation.OnUserAction;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.GameEntity;
-import com.almasb.fxgl.input.UserAction;
-import com.almasb.fxgl.physics.BoundingShape;
-import com.almasb.fxgl.physics.HitBox;
-import com.almasb.fxgl.scene.menu.MenuStyle;
+import com.almasb.fxgl.input.InputMapping;
 import com.almasb.fxgl.service.Input;
 import com.almasb.fxgl.settings.GameSettings;
-import javafx.geometry.Point2D;
 import javafx.scene.input.KeyCode;
 
 public class RunAndCatchApp extends GameApplication {
     private CharacterControl playerControl;
+    private GameEntity player;
 
     @Override
     protected void initSettings(GameSettings gameSettings) {
@@ -31,46 +29,41 @@ public class RunAndCatchApp extends GameApplication {
     protected void initInput() {
         Input input = getInput();
 
-        input.addAction(new UserAction("Move Left") {
-            @Override
-            protected void onAction() {
-                playerControl.moveLeft();
-            }
-        }, KeyCode.A);
+        input.addInputMapping(new InputMapping("Move Left", KeyCode.A));
+        input.addInputMapping(new InputMapping("Move Up", KeyCode.W));
+        input.addInputMapping(new InputMapping("Move Right", KeyCode.D));
+        input.addInputMapping(new InputMapping("Move Down", KeyCode.S));
+    }
 
-        input.addAction(new UserAction("Move Right") {
-            @Override
-            protected void onAction() {
-                playerControl.moveRight();
-            }
-        }, KeyCode.D);
+    @OnUserAction(name = "Move Left")
+    public void movePlayerLeft() {
+        playerControl.moveLeft();
+    }
 
-        input.addAction(new UserAction("Move Up") {
-            @Override
-            protected void onAction() {
-                playerControl.moveUp();
-            }
-        }, KeyCode.W);
+    @OnUserAction(name = "Move Right")
+    public void movePlayerRight() {
+        playerControl.moveRight();
+    }
 
-        input.addAction(new UserAction("Move Down") {
-            @Override
-            protected void onAction() {
-                playerControl.moveDown();
-            }
-        }, KeyCode.S);
+    @OnUserAction(name = "Move Up")
+    public void movePlayerUp() {
+        playerControl.moveUp();
+    }
+
+    @OnUserAction(name = "Move Down")
+    public void movePlayerDown() {
+        playerControl.moveDown();
     }
 
     @Override
     protected void initGame() {
-        playerControl = new CharacterControl();
 
-        GameEntity player = new GameEntity();
-        player.getBoundingBoxComponent().addHitBox(new HitBox("BODY",
-                new Point2D(5, 5), BoundingShape.box(27, 31)));
+        spawnPlayer();
+    }
 
-        player.addControl(playerControl);
-
-        getGameWorld().addEntity(player);
+    private void spawnPlayer() {
+        player = (GameEntity) getGameWorld().spawn("Character", getWidth() / 2 - 20, getHeight() - 40);
+        playerControl = player.getControlUnsafe(CharacterControl.class);
     }
 
     public static void main(String[] args) {
