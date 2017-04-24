@@ -48,7 +48,7 @@ public class CharacterControl extends AbstractControl {
 
         ViewComponent viewComponent = Entities.getView(entity);
 
-        characterSpriteSheet = FXGL.getAssetLoader().loadTexture("dawnRun.png");
+        characterSpriteSheet = FXGL.getAssetLoader().loadTexture("policemanRun.png");
         viewComponent.setView(characterSpriteSheet);
     }
 
