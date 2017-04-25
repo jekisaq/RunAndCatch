@@ -18,15 +18,15 @@ public class RunAndCatchFactory implements EntityFactory {
 
     @Spawns("policeman")
     public GameEntity getPoliceman(SpawnData spawnData) {
-        return getCharacter(spawnData, "policemanRun.png");
+        return getCharacter(spawnData, "policeman");
     }
 
     @Spawns("dawn")
     public GameEntity getDawn(SpawnData spawnData) {
-        return getCharacter(spawnData, "dawnRun.png");
+        return getCharacter(spawnData, "dawn");
     }
 
-    private GameEntity getCharacter(SpawnData data, String textureName) {
+    private GameEntity getCharacter(SpawnData data, String name) {
         PhysicsComponent physics = new PhysicsComponent();
         physics.setBodyType(BodyType.DYNAMIC);
 
@@ -35,7 +35,7 @@ public class RunAndCatchFactory implements EntityFactory {
                 .type(RunAndCatchType.CHARACTER)
                 .with(new CollidableComponent(true))
                 .with(physics)
-                .with(new CharacterControl(textureName))
+                .with(new CharacterControl(name + "Run.png"))
                 .build();
 
         character.getBoundingBoxComponent().addHitBox(new HitBox("BODY",
