@@ -16,10 +16,18 @@ import org.jbox2d.dynamics.BodyType;
 @SetEntityFactory
 public class RunAndCatchFactory implements EntityFactory {
 
-    @Spawns("Character")
-    public GameEntity getCharacter(SpawnData data) {
-        PhysicsComponent physics = new PhysicsComponent();
+    @Spawns("policeman")
+    public GameEntity getPoliceman(SpawnData spawnData) {
+        return getCharacter(spawnData, "policemanRun.png");
+    }
 
+    @Spawns("dawn")
+    public GameEntity getDawn(SpawnData spawnData) {
+        return getCharacter(spawnData, "dawnRun.png");
+    }
+
+    private GameEntity getCharacter(SpawnData data, String textureName) {
+        PhysicsComponent physics = new PhysicsComponent();
         physics.setBodyType(BodyType.DYNAMIC);
 
         GameEntity character = Entities.builder()
@@ -27,7 +35,7 @@ public class RunAndCatchFactory implements EntityFactory {
                 .type(RunAndCatchType.CHARACTER)
                 .with(new CollidableComponent(true))
                 .with(physics)
-                .with(new CharacterControl())
+                .with(new CharacterControl(textureName))
                 .build();
 
         character.getBoundingBoxComponent().addHitBox(new HitBox("BODY",

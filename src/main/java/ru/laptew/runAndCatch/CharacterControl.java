@@ -11,6 +11,8 @@ import com.almasb.fxgl.texture.Texture;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 
+import java.nio.file.Path;
+
 @SuppressWarnings("ALL")
 @Required(PhysicsComponent.class)
 public class CharacterControl extends AbstractControl {
@@ -23,6 +25,7 @@ public class CharacterControl extends AbstractControl {
 
     private static final int FRAME_COUNT = 4;
     private static final int FRAME_DELAY = 6;
+    private final String textureName;
 
 
     public enum MovementDirection {
@@ -39,6 +42,10 @@ public class CharacterControl extends AbstractControl {
 
     private double lastTimePerFrame;
 
+    public CharacterControl(String textureName) {
+        this.textureName = textureName;
+    }
+
     @Override
     public void onAdded(Entity entity) {
         movementDirection = MovementDirection.DOWN;
@@ -48,7 +55,7 @@ public class CharacterControl extends AbstractControl {
 
         ViewComponent viewComponent = Entities.getView(entity);
 
-        characterSpriteSheet = FXGL.getAssetLoader().loadTexture("policemanRun.png");
+        characterSpriteSheet = FXGL.getAssetLoader().loadTexture(textureName);
         viewComponent.setView(characterSpriteSheet);
     }
 

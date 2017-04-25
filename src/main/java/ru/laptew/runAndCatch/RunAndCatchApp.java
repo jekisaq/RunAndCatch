@@ -66,12 +66,12 @@ public class RunAndCatchApp extends GameApplication {
     }
 
     private void spawnPlayer() {
-        player = (GameEntity) getGameWorld().spawn("Character", getWidth() / 2 - getWidth() / 4, getHeight() / 2);
+        player = (GameEntity) getGameWorld().spawn("dawn", getWidth() / 2 - getWidth() / 4, getHeight() / 2);
         playerControl = player.getControlUnsafe(CharacterControl.class);
     }
 
     private void spawnEnemy() {
-        enemy = (GameEntity) getGameWorld().spawn("Character", getWidth() / 2 + getWidth() / 4, getHeight() / 2);
+        enemy = (GameEntity) getGameWorld().spawn("policeman", getWidth() / 2 + getWidth() / 4, getHeight() / 2);
         enemyControl = enemy.getControlUnsafe(CharacterControl.class);
     }
 
