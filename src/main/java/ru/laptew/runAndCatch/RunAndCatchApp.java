@@ -13,11 +13,9 @@ import javafx.geometry.Point2D;
 import javafx.scene.control.Label;
 import javafx.scene.input.KeyCode;
 import javafx.scene.text.Font;
-import javafx.scene.text.Text;
 import ru.laptew.runAndCatch.component.BotComponent;
-import ru.laptew.runAndCatch.control.AIProximityControl;
-import ru.laptew.runAndCatch.control.AIRunControl;
 import ru.laptew.runAndCatch.control.CharacterControl;
+import ru.laptew.runAndCatch.managers.BlunderManager;
 
 public class RunAndCatchApp extends GameApplication {
     private CharacterControl playerControl;
@@ -86,8 +84,7 @@ public class RunAndCatchApp extends GameApplication {
         int rockCount = FXGLMath.random(10, 25);
 
         for (int i = 0; i < rockCount; i++) {
-            Point2D spawnPoint = new Point2D(FXGLMath.random(0, getWidth()), FXGLMath.random(0, getHeight()));
-            getGameWorld().spawn("rock", spawnPoint);
+            getGameWorld().spawn("rock");
         }
     }
 

@@ -1,4 +1,4 @@
-package ru.laptew.runAndCatch;
+package ru.laptew.runAndCatch.managers;
 
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.core.math.FXGLMath;
@@ -8,6 +8,7 @@ import com.almasb.fxgl.entity.component.IDComponent;
 import com.almasb.fxgl.physics.CollisionHandler;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import ru.laptew.runAndCatch.RunAndCatchType;
 import ru.laptew.runAndCatch.component.BotComponent;
 
 import java.util.Arrays;
