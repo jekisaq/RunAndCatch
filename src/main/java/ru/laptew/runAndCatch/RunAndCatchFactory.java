@@ -2,6 +2,7 @@ package ru.laptew.runAndCatch;
 
 import com.almasb.fxgl.annotation.SetEntityFactory;
 import com.almasb.fxgl.annotation.Spawns;
+import com.almasb.fxgl.ecs.Entity;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.EntityFactory;
 import com.almasb.fxgl.entity.GameEntity;
@@ -12,6 +13,8 @@ import com.almasb.fxgl.physics.HitBox;
 import com.almasb.fxgl.physics.PhysicsComponent;
 import javafx.geometry.Point2D;
 import org.jbox2d.dynamics.BodyType;
+import ru.laptew.runAndCatch.control.AIProximityControl;
+import ru.laptew.runAndCatch.control.CharacterControl;
 
 @SetEntityFactory
 public class RunAndCatchFactory implements EntityFactory {
@@ -24,6 +27,13 @@ public class RunAndCatchFactory implements EntityFactory {
     @Spawns("dawn")
     public GameEntity getDawn(SpawnData spawnData) {
         return getCharacter(spawnData, "dawn");
+    }
+
+    public GameEntity getAIRival(SpawnData spawnData, Entity rival, String rivalName) {
+        GameEntity character = getCharacter(spawnData, rivalName);
+        character.addControl(new AIProximityControl(rival));
+
+        return character;
     }
 
     private GameEntity getCharacter(SpawnData data, String name) {

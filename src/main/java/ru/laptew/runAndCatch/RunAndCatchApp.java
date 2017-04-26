@@ -9,14 +9,18 @@ import com.almasb.fxgl.input.InputMapping;
 import com.almasb.fxgl.service.Input;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.scene.input.KeyCode;
+import ru.laptew.runAndCatch.control.AIProximityControl;
+import ru.laptew.runAndCatch.control.AIRunControl;
+import ru.laptew.runAndCatch.control.CharacterControl;
 
 public class RunAndCatchApp extends GameApplication {
     private CharacterControl playerControl, enemyControl;
-    private GameEntity player, enemy;
+    private GameEntity player, rival;
 
     @Override
     protected void initSettings(GameSettings gameSettings) {
-        gameSettings.setTitle("Догонялки");
+        gameSettings.setTitle("Blunders");
+        gameSettings.setVersion("1.0");
         gameSettings.setWidth(600);
         gameSettings.setHeight(400);
         gameSettings.setIntroEnabled(false);
@@ -62,7 +66,9 @@ public class RunAndCatchApp extends GameApplication {
         getPhysicsWorld().setGravity(0, 0);
         getGameWorld().addEntity(Entities.makeScreenBounds(40));
         spawnPlayer();
-        spawnEnemy();
+        spawnRival();
+
+        getPhysicsWorld().addCollisionHandler(new BlunderManager(player, rival));
     }
 
     private void spawnPlayer() {
@@ -70,9 +76,9 @@ public class RunAndCatchApp extends GameApplication {
         playerControl = player.getControlUnsafe(CharacterControl.class);
     }
 
-    private void spawnEnemy() {
-        enemy = (GameEntity) getGameWorld().spawn("policeman", getWidth() / 2 + getWidth() / 4, getHeight() / 2);
-        enemyControl = enemy.getControlUnsafe(CharacterControl.class);
+    private void spawnRival() {
+        rival = (GameEntity) getGameWorld().spawn("policeman", getWidth() / 2 + getWidth() / 4, getHeight() / 2);
+        rival.addControl(new AIRunControl(player));
     }
 
     public static void main(String[] args) {

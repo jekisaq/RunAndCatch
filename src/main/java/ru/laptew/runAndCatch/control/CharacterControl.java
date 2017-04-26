@@ -1,4 +1,4 @@
-package ru.laptew.runAndCatch;
+package ru.laptew.runAndCatch.control;
 
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.ecs.AbstractControl;
@@ -77,7 +77,7 @@ public class CharacterControl extends AbstractControl {
 
     }
 
-    public int getFrameCount() {
+    private int getFrameCount() {
         return FRAME_COUNT * FRAME_DELAY;
     }
 
