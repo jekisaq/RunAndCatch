@@ -9,11 +9,13 @@ import com.almasb.fxgl.entity.GameEntity;
 import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.component.CollidableComponent;
 import com.almasb.fxgl.entity.component.IDComponent;
+import com.almasb.fxgl.parser.tiled.TiledMap;
 import com.almasb.fxgl.physics.BoundingShape;
 import com.almasb.fxgl.physics.HitBox;
 import com.almasb.fxgl.physics.PhysicsComponent;
 import javafx.geometry.Point2D;
 import org.jbox2d.dynamics.BodyType;
+import org.jbox2d.dynamics.FixtureDef;
 import ru.laptew.runAndCatch.control.AIProximityControl;
 import ru.laptew.runAndCatch.control.CharacterControl;
 
@@ -30,6 +32,24 @@ public class RunAndCatchFactory implements EntityFactory {
     @Spawns("dawn")
     public GameEntity getDawn(SpawnData spawnData) {
         return getCharacter(spawnData, "dawn");
+    }
+
+    @Spawns("rock")
+    public GameEntity getRock(SpawnData spawnData) {
+        PhysicsComponent physicsComponent = new PhysicsComponent();
+
+        GameEntity rock = Entities.builder()
+                .from(spawnData)
+                .type(RunAndCatchType.ROCK)
+                .with(physicsComponent)
+                .with(new CollidableComponent(true))
+                .viewFromTexture("rock.png")
+                .build();
+
+        rock.getBoundingBoxComponent().addHitBox(new HitBox("BODY",
+                new Point2D(5, 5), BoundingShape.box(28, 28)));
+
+        return rock;
     }
 
     private GameEntity getCharacter(SpawnData data, String name) {

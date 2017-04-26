@@ -3,11 +3,13 @@ package ru.laptew.runAndCatch;
 import com.almasb.fxgl.annotation.OnUserAction;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
+import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.GameEntity;
 import com.almasb.fxgl.input.InputMapping;
 import com.almasb.fxgl.service.Input;
 import com.almasb.fxgl.settings.GameSettings;
+import javafx.geometry.Point2D;
 import javafx.scene.control.Label;
 import javafx.scene.input.KeyCode;
 import javafx.scene.text.Font;
@@ -72,11 +74,21 @@ public class RunAndCatchApp extends GameApplication {
         getGameWorld().addEntity(Entities.makeScreenBounds(40));
         spawnPlayer();
         spawnRival();
+        spawnRocks();
 
         blunderManager = new BlunderManager(player, rival);
         blunderManager.defineBlunder();
 
         getPhysicsWorld().addCollisionHandler(blunderManager);
+    }
+
+    private void spawnRocks() {
+        int rockCount = FXGLMath.random(10, 25);
+
+        for (int i = 0; i < rockCount; i++) {
+            Point2D spawnPoint = new Point2D(FXGLMath.random(0, getWidth()), FXGLMath.random(0, getHeight()));
+            getGameWorld().spawn("rock", spawnPoint);
+        }
     }
 
     private void spawnPlayer() {
