@@ -8,6 +8,7 @@ import com.almasb.fxgl.entity.EntityFactory;
 import com.almasb.fxgl.entity.GameEntity;
 import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.component.CollidableComponent;
+import com.almasb.fxgl.entity.component.IDComponent;
 import com.almasb.fxgl.physics.BoundingShape;
 import com.almasb.fxgl.physics.HitBox;
 import com.almasb.fxgl.physics.PhysicsComponent;
@@ -19,6 +20,8 @@ import ru.laptew.runAndCatch.control.CharacterControl;
 @SetEntityFactory
 public class RunAndCatchFactory implements EntityFactory {
 
+    private static int lastID = 0;
+
     @Spawns("policeman")
     public GameEntity getPoliceman(SpawnData spawnData) {
         return getCharacter(spawnData, "policeman");
@@ -29,13 +32,6 @@ public class RunAndCatchFactory implements EntityFactory {
         return getCharacter(spawnData, "dawn");
     }
 
-    public GameEntity getAIRival(SpawnData spawnData, Entity rival, String rivalName) {
-        GameEntity character = getCharacter(spawnData, rivalName);
-        character.addControl(new AIProximityControl(rival));
-
-        return character;
-    }
-
     private GameEntity getCharacter(SpawnData data, String name) {
         PhysicsComponent physics = new PhysicsComponent();
         physics.setBodyType(BodyType.DYNAMIC);
@@ -44,6 +40,7 @@ public class RunAndCatchFactory implements EntityFactory {
                 .from(data)
                 .type(RunAndCatchType.CHARACTER)
                 .with(new CollidableComponent(true))
+                .with(new IDComponent(name, getUniqueID()))
                 .with(physics)
                 .with(new CharacterControl(name + "Run.png"))
                 .build();
@@ -53,6 +50,10 @@ public class RunAndCatchFactory implements EntityFactory {
 
         return character;
 
+    }
+
+    private int getUniqueID() {
+        return lastID++;
     }
 
 }

@@ -8,14 +8,19 @@ import com.almasb.fxgl.entity.GameEntity;
 import com.almasb.fxgl.input.InputMapping;
 import com.almasb.fxgl.service.Input;
 import com.almasb.fxgl.settings.GameSettings;
+import javafx.scene.control.Label;
 import javafx.scene.input.KeyCode;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
+import ru.laptew.runAndCatch.component.BotComponent;
 import ru.laptew.runAndCatch.control.AIProximityControl;
 import ru.laptew.runAndCatch.control.AIRunControl;
 import ru.laptew.runAndCatch.control.CharacterControl;
 
 public class RunAndCatchApp extends GameApplication {
-    private CharacterControl playerControl, enemyControl;
+    private CharacterControl playerControl;
     private GameEntity player, rival;
+    private BlunderManager blunderManager;
 
     @Override
     protected void initSettings(GameSettings gameSettings) {
@@ -68,7 +73,10 @@ public class RunAndCatchApp extends GameApplication {
         spawnPlayer();
         spawnRival();
 
-        getPhysicsWorld().addCollisionHandler(new BlunderManager(player, rival));
+        blunderManager = new BlunderManager(player, rival);
+        blunderManager.defineBlunder();
+
+        getPhysicsWorld().addCollisionHandler(blunderManager);
     }
 
     private void spawnPlayer() {
@@ -78,7 +86,19 @@ public class RunAndCatchApp extends GameApplication {
 
     private void spawnRival() {
         rival = (GameEntity) getGameWorld().spawn("policeman", getWidth() / 2 + getWidth() / 4, getHeight() / 2);
-        rival.addControl(new AIRunControl(player));
+        rival.addComponent(new BotComponent(player));
+    }
+
+    @Override
+    protected void initUI() {
+        Label blunderLabel = new Label();
+        blunderLabel.setFont(new Font(18));
+        blunderLabel.setText("Ляпа — " + blunderManager.getCurrentBlunderIDComponent().getName());
+
+        blunderManager.getCurrentBlunderIDComponentProperty().addListener((observable, oldValue, newValue) ->
+                blunderLabel.setText("Ляпа — " + newValue.getName()));
+
+        getGameScene().addUINode(blunderLabel);
     }
 
     public static void main(String[] args) {
