@@ -5,6 +5,7 @@ import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.entity.Entities;
+import com.almasb.fxgl.entity.EntityView;
 import com.almasb.fxgl.entity.GameEntity;
 import com.almasb.fxgl.input.InputMapping;
 import com.almasb.fxgl.service.Input;
@@ -70,6 +71,7 @@ public class RunAndCatchApp extends GameApplication {
 
         getPhysicsWorld().setGravity(0, 0);
         getGameWorld().addEntity(Entities.makeScreenBounds(40));
+        initBackground();
         spawnPlayer();
         spawnRival();
         spawnRocks();
@@ -79,6 +81,12 @@ public class RunAndCatchApp extends GameApplication {
 
         getPhysicsWorld().addCollisionHandler(blunderManager);
     }
+
+    private void initBackground() {
+        EntityView backgroundView = new EntityView(getAssetLoader().loadTexture("background.png", getWidth(), getHeight()));
+        getGameScene().addGameView(backgroundView);
+    }
+
 
     private void spawnRocks() {
         int rockCount = FXGLMath.random(10, 25);
@@ -106,6 +114,8 @@ public class RunAndCatchApp extends GameApplication {
 
         blunderManager.getCurrentBlunderIDComponentProperty().addListener((observable, oldValue, newValue) ->
                 blunderLabel.setText("Ляпа — " + newValue.getName()));
+
+
 
         getGameScene().addUINode(blunderLabel);
     }
