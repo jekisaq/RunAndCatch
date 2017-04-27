@@ -68,9 +68,18 @@ public class BlunderManager extends CollisionHandler {
         currentBlunderIDComponent = new SimpleObjectProperty<>(
                 blunder.getComponent(IDComponent.class).orElseThrow(IllegalStateException::new));
 
-        BotComponent botComponent = blunder.getComponentUnsafe(BotComponent.class);
-        if (botComponent != null) {
-            botComponent.makeBotProximity();
+        if (blunder.hasComponent(BotComponent.class)) {
+            blunder.getComponentUnsafe(BotComponent.class).makeBotProximity();
+        } else {
+            makeBotsRunning();
+        }
+    }
+
+    private void makeBotsRunning() {
+        for (GameEntity entity : potentialBlunderList) {
+            if (entity.hasComponent(BotComponent.class)) {
+                entity.getComponentUnsafe(BotComponent.class).makeBotMovingAway();
+            }
         }
     }
 

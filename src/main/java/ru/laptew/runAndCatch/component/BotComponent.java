@@ -14,12 +14,18 @@ public class BotComponent extends AbstractComponent {
     }
 
     public void makeBotProximity() {
-        getEntity().removeControl(AIRunControl.class);
+        if (getEntity().hasControl(AIRunControl.class)) {
+            getEntity().removeControl(AIRunControl.class);
+        }
+
         getEntity().addControl(new AIProximityControl(target));
     }
 
     public void makeBotMovingAway() {
-        getEntity().removeControl(AIProximityControl.class);
+        if (getEntity().hasControl(AIProximityControl.class)) {
+            getEntity().removeControl(AIProximityControl.class);
+        }
+
         getEntity().addControl(new AIRunControl(target));
     }
 }
