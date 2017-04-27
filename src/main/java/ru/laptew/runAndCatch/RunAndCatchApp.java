@@ -15,6 +15,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import javafx.util.Duration;
 import ru.laptew.runAndCatch.component.BotComponent;
 import ru.laptew.runAndCatch.control.CharacterControl;
 import ru.laptew.runAndCatch.managers.BlunderManager;
@@ -101,6 +102,8 @@ public class RunAndCatchApp extends GameApplication {
         blunderManager.defineBlunder();
 
         getPhysicsWorld().addCollisionHandler(blunderManager);
+
+        getMasterTimer().runAtInterval(() -> getGameState().increment("time", -1), Duration.seconds(1));
     }
 
     private void initBackground() {
@@ -131,10 +134,17 @@ public class RunAndCatchApp extends GameApplication {
     @Override
     protected void initGameVars(Map<String, Object> vars) {
         vars.put("isPaused", false);
+        vars.put("time", 180);
     }
 
     @Override
     protected void initUI() {
+        Text uiTime = getUIFactory().newText("Время: ", Color.BLACK, 18);
+        uiTime.setTranslateX(getWidth() - 125);
+        uiTime.setTranslateY(20);
+        uiTime.textProperty().bind(getGameState().intProperty("time").asString("Время: %d"));
+
+
         Label uiBlunder = new Label();
         uiBlunder.setFont(new Font(18));
         uiBlunder.setText("Ляпа — " + blunderManager.getCurrentBlunderIDComponent().getName());
@@ -150,9 +160,8 @@ public class RunAndCatchApp extends GameApplication {
 
         getGameScene().addUINode(uiBlunder);
         getGameScene().addUINode(uiPause);
+        getGameScene().addUINode(uiTime);
     }
-
-
 
     public static void main(String[] args) {
         launch(args);
