@@ -21,6 +21,7 @@ public class RunAndCatchApp extends GameApplication {
     private CharacterControl playerControl;
     private GameEntity player, rival;
     private BlunderManager blunderManager;
+    private CharacterControl rivalControl;
 
     @Override
     protected void initSettings(GameSettings gameSettings) {
@@ -39,10 +40,12 @@ public class RunAndCatchApp extends GameApplication {
     protected void initInput() {
         Input input = getInput();
 
+
         input.addInputMapping(new InputMapping("Move Left", KeyCode.A));
         input.addInputMapping(new InputMapping("Move Up", KeyCode.W));
         input.addInputMapping(new InputMapping("Move Right", KeyCode.D));
         input.addInputMapping(new InputMapping("Move Down", KeyCode.S));
+        input.addInputMapping(new InputMapping("Pause", KeyCode.ENTER));
     }
 
     @OnUserAction(name = "Move Left")
@@ -63,6 +66,22 @@ public class RunAndCatchApp extends GameApplication {
     @OnUserAction(name = "Move Down")
     public void movePlayerDown() {
         playerControl.moveDown();
+    }
+
+    @OnUserAction(name = "Pause")
+    public void pauseGame() {
+        if (playerControl.isPaused()) {
+
+            playerControl.resume();
+        } else {
+            playerControl.pause();
+        }
+
+        if (rivalControl.isPaused()) {
+            rivalControl.resume();
+        } else {
+            rivalControl.pause();
+        }
     }
 
     @Override
@@ -102,6 +121,7 @@ public class RunAndCatchApp extends GameApplication {
 
     private void spawnRival() {
         rival = (GameEntity) getGameWorld().spawn("policeman", getWidth() / 2 + getWidth() / 4, getHeight() / 2);
+        rivalControl = rival.getControlUnsafe(CharacterControl.class);
         rival.addComponent(new BotComponent(player));
     }
 
@@ -118,6 +138,8 @@ public class RunAndCatchApp extends GameApplication {
 
         getGameScene().addUINode(uiBlunder);
     }
+
+
 
     public static void main(String[] args) {
         launch(args);
