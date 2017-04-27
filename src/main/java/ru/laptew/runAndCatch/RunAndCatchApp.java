@@ -12,10 +12,14 @@ import com.almasb.fxgl.service.Input;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.scene.control.Label;
 import javafx.scene.input.KeyCode;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 import ru.laptew.runAndCatch.component.BotComponent;
 import ru.laptew.runAndCatch.control.CharacterControl;
 import ru.laptew.runAndCatch.managers.BlunderManager;
+
+import java.util.Map;
 
 public class RunAndCatchApp extends GameApplication {
     private CharacterControl playerControl;
@@ -39,7 +43,6 @@ public class RunAndCatchApp extends GameApplication {
     @Override
     protected void initInput() {
         Input input = getInput();
-
 
         input.addInputMapping(new InputMapping("Move Left", KeyCode.A));
         input.addInputMapping(new InputMapping("Move Up", KeyCode.W));
@@ -70,18 +73,18 @@ public class RunAndCatchApp extends GameApplication {
 
     @OnUserAction(name = "Pause")
     public void pauseGame() {
-        if (playerControl.isPaused()) {
-
+        if (getGameState().getBoolean("isPaused")) {
             playerControl.resume();
+            rivalControl.resume();
+
+            getGameState().setValue("isPaused", false);
         } else {
             playerControl.pause();
+            rivalControl.pause();
+
+            getGameState().setValue("isPaused", true);
         }
 
-        if (rivalControl.isPaused()) {
-            rivalControl.resume();
-        } else {
-            rivalControl.pause();
-        }
     }
 
     @Override
@@ -126,6 +129,11 @@ public class RunAndCatchApp extends GameApplication {
     }
 
     @Override
+    protected void initGameVars(Map<String, Object> vars) {
+        vars.put("isPaused", false);
+    }
+
+    @Override
     protected void initUI() {
         Label uiBlunder = new Label();
         uiBlunder.setFont(new Font(18));
@@ -134,9 +142,14 @@ public class RunAndCatchApp extends GameApplication {
         blunderManager.getCurrentBlunderIDComponentProperty().addListener((observable, oldValue, newValue) ->
                 uiBlunder.setText("Ляпа — " + newValue.getName()));
 
+        Text uiPause = getUIFactory().newText("PAUSE", Color.FUCHSIA, 48);
 
+        getUIFactory().centerText(uiPause);
+
+        uiPause.visibleProperty().bind(getGameState().booleanProperty("isPaused"));
 
         getGameScene().addUINode(uiBlunder);
+        getGameScene().addUINode(uiPause);
     }
 
 
