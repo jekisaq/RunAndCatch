@@ -11,8 +11,6 @@ import com.almasb.fxgl.texture.Texture;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 
-import java.nio.file.Path;
-
 @SuppressWarnings("ALL")
 @Required(PhysicsComponent.class)
 public class CharacterControl extends AbstractControl {

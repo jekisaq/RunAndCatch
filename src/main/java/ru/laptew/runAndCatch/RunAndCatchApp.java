@@ -10,7 +10,6 @@ import com.almasb.fxgl.entity.GameEntity;
 import com.almasb.fxgl.input.InputMapping;
 import com.almasb.fxgl.service.Input;
 import com.almasb.fxgl.settings.GameSettings;
-import javafx.geometry.Point2D;
 import javafx.scene.control.Label;
 import javafx.scene.input.KeyCode;
 import javafx.scene.text.Font;
@@ -108,16 +107,16 @@ public class RunAndCatchApp extends GameApplication {
 
     @Override
     protected void initUI() {
-        Label blunderLabel = new Label();
-        blunderLabel.setFont(new Font(18));
-        blunderLabel.setText("Ляпа — " + blunderManager.getCurrentBlunderIDComponent().getName());
+        Label uiBlunder = new Label();
+        uiBlunder.setFont(new Font(18));
+        uiBlunder.setText("Ляпа — " + blunderManager.getCurrentBlunderIDComponent().getName());
 
         blunderManager.getCurrentBlunderIDComponentProperty().addListener((observable, oldValue, newValue) ->
-                blunderLabel.setText("Ляпа — " + newValue.getName()));
+                uiBlunder.setText("Ляпа — " + newValue.getName()));
 
 
 
-        getGameScene().addUINode(blunderLabel);
+        getGameScene().addUINode(uiBlunder);
     }
 
     public static void main(String[] args) {
