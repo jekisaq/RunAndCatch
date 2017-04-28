@@ -29,6 +29,11 @@ public class BlunderManager extends CollisionHandler {
 
     @Override
     protected void onCollision(Entity primaryEntity, Entity secondaryEntity) {
+        if (FXGL.getApp().getGameState().getInt("blunderTime") < 2) {
+            return;
+        }
+
+
         IDComponent characterIDComponent = primaryEntity.getComponentUnsafe(IDComponent.class);
 
         GameEntity blunder, blundered;
