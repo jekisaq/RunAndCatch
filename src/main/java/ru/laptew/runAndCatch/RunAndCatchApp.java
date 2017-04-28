@@ -153,7 +153,7 @@ public class RunAndCatchApp extends GameApplication {
     @Override
     protected void initGameVars(Map<String, Object> vars) {
         vars.put("isPaused", false);
-        vars.put("gameTime", 30);
+        vars.put("gameTime", 60);
         vars.put("blunderTime", 0);
     }
 
