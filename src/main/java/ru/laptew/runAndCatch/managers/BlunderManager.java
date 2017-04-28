@@ -32,27 +32,25 @@ public class BlunderManager extends CollisionHandler {
             return;
         }
 
-        IDComponent blunderIDComponent, blunderedIDComponent,
-                characterIDComponent = character.getComponent(IDComponent.class).orElseThrow(IllegalStateException::new);
-        IDComponent character2IDComponent = character2.getComponent(IDComponent.class).orElseThrow(IllegalStateException::new);
+        IDComponent characterIDComponent = character.getComponentUnsafe(IDComponent.class);
+
+        GameEntity blunder, blundered;
 
         if (characterIDComponent == currentBlunderIDComponent.get()) {
-            blunderIDComponent = characterIDComponent;
-            blunderedIDComponent = character2IDComponent;
+            blunder = (GameEntity) character;
+            blundered = (GameEntity) character2;
         } else {
-            blunderIDComponent = character2IDComponent;
-            blunderedIDComponent = characterIDComponent;
+            blunder = (GameEntity) character2;
+            blundered = (GameEntity) character;
         }
 
-        currentBlunderIDComponent.setValue(blunderedIDComponent);
+        currentBlunderIDComponent.setValue(blundered.getComponentUnsafe(IDComponent.class));
 
+        if (blunder.hasComponent(BotComponent.class)) {
+            blunder.getComponentUnsafe(BotComponent.class).makeBotMovingAway();
 
-        if (blunderIDComponent.getEntity().hasComponent(BotComponent.class)) {
-            BotComponent botComponent = blunderIDComponent.getEntity().getComponentUnsafe(BotComponent.class);
-            botComponent.makeBotMovingAway();
-        } else if (character2.hasComponent(BotComponent.class)) {
-            BotComponent botComponent = character2.getComponentUnsafe(BotComponent.class);
-            botComponent.makeBotProximity();
+        } else if (blundered.hasComponent(BotComponent.class)) {
+            blundered.getComponentUnsafe(BotComponent.class).makeBotProximity();
         }
 
 
@@ -65,8 +63,7 @@ public class BlunderManager extends CollisionHandler {
             throw new IllegalStateException("No blunder was defined");
         }
 
-        currentBlunderIDComponent = new SimpleObjectProperty<>(
-                blunder.getComponent(IDComponent.class).orElseThrow(IllegalStateException::new));
+        currentBlunderIDComponent = new SimpleObjectProperty<>(blunder.getComponentUnsafe(IDComponent.class));
 
         if (blunder.hasComponent(BotComponent.class)) {
             blunder.getComponentUnsafe(BotComponent.class).makeBotProximity();

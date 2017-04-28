@@ -142,7 +142,7 @@ public class RunAndCatchApp extends GameApplication {
     @Override
     protected void initGameVars(Map<String, Object> vars) {
         vars.put("isPaused", false);
-        vars.put("time", 10);
+        vars.put("time", 190);
         vars.put("statistics", new HashMap<Integer, List<Integer>>());
     }
 
