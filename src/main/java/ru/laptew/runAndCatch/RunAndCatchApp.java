@@ -21,10 +21,7 @@ import ru.laptew.runAndCatch.component.BotComponent;
 import ru.laptew.runAndCatch.control.CharacterControl;
 import ru.laptew.runAndCatch.managers.BlunderManager;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class RunAndCatchApp extends GameApplication {
 
@@ -112,9 +109,14 @@ public class RunAndCatchApp extends GameApplication {
         getMasterTimer().runAtInterval(() -> getGameState().increment("gameTime", -1), Duration.seconds(1));
         getMasterTimer().runAtInterval(() -> getGameState().increment("blunderTime", 1), Duration.seconds(1));
 
-        blunderManager.getCurrentBlunderProperty().addListener((observable, oldValue, newValue) -> {
-            statistics.get(newValue);
-        });
+        blunderManager.getCurrentBlunderProperty().addListener((observable, oldValue, newValue) -> addToStatistics(oldValue));
+    }
+
+    private void addToStatistics(GameEntity gameEntity) {
+        List<Integer> blunderTimes = statistics.get(gameEntity);
+
+        blunderTimes.add(getGameState().getInt("blunderTime"));
+        getGameState().setValue("blunderTime", 0);
     }
 
     private void initBackground() {
@@ -134,24 +136,24 @@ public class RunAndCatchApp extends GameApplication {
     private void spawnPlayer() {
         player = (GameEntity) getGameWorld().spawn("dawn", getWidth() / 2 - getWidth() / 4, getHeight() / 2);
         playerControl = player.getControlUnsafe(CharacterControl.class);
-        addToStatistics(player);
+        trackForStatistics(player);
     }
 
     private void spawnRival() {
         rival = (GameEntity) getGameWorld().spawn("policeman", getWidth() / 2 + getWidth() / 4, getHeight() / 2);
         rivalControl = rival.getControlUnsafe(CharacterControl.class);
         rival.addComponent(new BotComponent(player));
-        addToStatistics(rival);
+        trackForStatistics(rival);
     }
 
-    private void addToStatistics(GameEntity gameEntity) {
+    private void trackForStatistics(GameEntity gameEntity) {
         statistics.put(gameEntity, new LinkedList<>());
     }
 
     @Override
     protected void initGameVars(Map<String, Object> vars) {
         vars.put("isPaused", false);
-        vars.put("gameTime", 190);
+        vars.put("gameTime", 30);
         vars.put("blunderTime", 0);
     }
 
@@ -184,7 +186,21 @@ public class RunAndCatchApp extends GameApplication {
     @Override
     protected void onPostUpdate(double tpf) {
         if (getGameState().getInt("gameTime") <= 0) {
-            getDisplay().showMessageBox("Игра окончена!", this::exit);
+            List<GameEntity> nonBlunders = blunderManager.getNonBlunders();
+            if (nonBlunders.size() > 0) {
+                addToStatistics(nonBlunders.get(FXGLMath.random(0, nonBlunders.size() - 1)));
+            }
+
+            Map<String, Integer> gameEntityToMaxNonBlunderTime = new HashMap<>();
+            statistics.forEach((gameEntity, blunderTimes) ->
+                    gameEntityToMaxNonBlunderTime.put(gameEntity.getComponentUnsafe(IDComponent.class).getName(),
+                        blunderTimes.stream().max(Comparator.comparingInt(value -> value)).orElse(0)));
+
+            gameEntityToMaxNonBlunderTime.entrySet().stream().max(Comparator.comparingInt(Map.Entry::getValue))
+                    .ifPresent(entry ->
+                            getDisplay().showMessageBox("Игра окончена! \n Победитель — " + entry.getKey(), this::exit));
+
+
         }
     }
 

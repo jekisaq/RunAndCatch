@@ -13,6 +13,7 @@ import ru.laptew.runAndCatch.component.BotComponent;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class BlunderManager extends CollisionHandler {
 
@@ -43,7 +44,6 @@ public class BlunderManager extends CollisionHandler {
         if (!potentialBlunderList.contains(blunder) || !potentialBlunderList.contains(blundered)) {
             return;
         }
-
 
         currentBlunder.setValue(blundered);
 
@@ -87,5 +87,13 @@ public class BlunderManager extends CollisionHandler {
 
     public ObjectProperty<GameEntity> getCurrentBlunderProperty() {
         return currentBlunder;
+    }
+
+    public List<GameEntity> getNonBlunders() {
+
+        return potentialBlunderList.stream()
+                .filter(gameEntity -> !gameEntity.equals(getCurrentBlunder()))
+                .collect(Collectors.toList());
+
     }
 }
