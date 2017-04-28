@@ -21,9 +21,14 @@ import ru.laptew.runAndCatch.component.BotComponent;
 import ru.laptew.runAndCatch.control.CharacterControl;
 import ru.laptew.runAndCatch.managers.BlunderManager;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 public class RunAndCatchApp extends GameApplication {
+
+    private HashMap<GameEntity, List<Integer>> statistics = new HashMap<>();
     private CharacterControl playerControl;
     private GameEntity player, rival;
     private BlunderManager blunderManager;
@@ -104,7 +109,12 @@ public class RunAndCatchApp extends GameApplication {
 
         getPhysicsWorld().addCollisionHandler(blunderManager);
 
-        getMasterTimer().runAtInterval(() -> getGameState().increment("time", -1), Duration.seconds(1));
+        getMasterTimer().runAtInterval(() -> getGameState().increment("gameTime", -1), Duration.seconds(1));
+        getMasterTimer().runAtInterval(() -> getGameState().increment("blunderTime", 1), Duration.seconds(1));
+
+        blunderManager.getCurrentBlunderProperty().addListener((observable, oldValue, newValue) -> {
+            statistics.get(newValue);
+        });
     }
 
     private void initBackground() {
@@ -131,19 +141,18 @@ public class RunAndCatchApp extends GameApplication {
         rival = (GameEntity) getGameWorld().spawn("policeman", getWidth() / 2 + getWidth() / 4, getHeight() / 2);
         rivalControl = rival.getControlUnsafe(CharacterControl.class);
         rival.addComponent(new BotComponent(player));
-        addToStatistics(player);
+        addToStatistics(rival);
     }
 
-    private void addToStatistics(GameEntity player) {
-        HashMap<Integer, List<Integer>> statistics = getGameState().getObject("statistics");
-        statistics.put(player.getComponentUnsafe(IDComponent.class).getID(), new LinkedList<>());
+    private void addToStatistics(GameEntity gameEntity) {
+        statistics.put(gameEntity, new LinkedList<>());
     }
 
     @Override
     protected void initGameVars(Map<String, Object> vars) {
         vars.put("isPaused", false);
-        vars.put("time", 190);
-        vars.put("statistics", new HashMap<Integer, List<Integer>>());
+        vars.put("gameTime", 190);
+        vars.put("blunderTime", 0);
     }
 
     @Override
@@ -151,15 +160,15 @@ public class RunAndCatchApp extends GameApplication {
         Text uiTime = getUIFactory().newText("Время: ", Color.BLACK, 18);
         uiTime.setTranslateX(getWidth() - 125);
         uiTime.setTranslateY(20);
-        uiTime.textProperty().bind(getGameState().intProperty("time").asString("Время: %d"));
+        uiTime.textProperty().bind(getGameState().intProperty("gameTime").asString("Время: %d"));
 
 
         Label uiBlunder = new Label();
         uiBlunder.setFont(new Font(18));
-        uiBlunder.setText("Ляпа — " + blunderManager.getCurrentBlunderIDComponent().getName());
+        uiBlunder.setText("Ляпа — " + blunderManager.getCurrentBlunder().getComponentUnsafe(IDComponent.class).getName());
 
-        blunderManager.getCurrentBlunderIDComponentProperty().addListener((observable, oldValue, newValue) ->
-                uiBlunder.setText("Ляпа — " + newValue.getName()));
+        blunderManager.getCurrentBlunderProperty().addListener((observable, oldValue, newValue) ->
+                uiBlunder.setText("Ляпа — " + newValue.getComponentUnsafe(IDComponent.class).getName()));
 
         Text uiPause = getUIFactory().newText("PAUSE", Color.FUCHSIA, 48);
 
@@ -174,7 +183,7 @@ public class RunAndCatchApp extends GameApplication {
 
     @Override
     protected void onPostUpdate(double tpf) {
-        if (getGameState().getInt("time") <= 0) {
+        if (getGameState().getInt("gameTime") <= 0) {
             getDisplay().showMessageBox("Игра окончена!", this::exit);
         }
     }

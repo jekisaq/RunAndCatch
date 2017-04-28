@@ -18,7 +18,7 @@ public class BlunderManager extends CollisionHandler {
 
     private List<GameEntity> potentialBlunderList;
 
-    private ObjectProperty<IDComponent> currentBlunderIDComponent;
+    private ObjectProperty<GameEntity> currentBlunder;
 
     public BlunderManager(GameEntity... potentialBlunders) {
         super(RunAndCatchType.CHARACTER, RunAndCatchType.CHARACTER);
@@ -27,24 +27,25 @@ public class BlunderManager extends CollisionHandler {
     }
 
     @Override
-    protected void onCollision(Entity character, Entity character2) {
-        if (!potentialBlunderList.contains(character) || !potentialBlunderList.contains(character2)) {
-            return;
-        }
-
-        IDComponent characterIDComponent = character.getComponentUnsafe(IDComponent.class);
+    protected void onCollision(Entity primaryEntity, Entity secondaryEntity) {
+        IDComponent characterIDComponent = primaryEntity.getComponentUnsafe(IDComponent.class);
 
         GameEntity blunder, blundered;
 
-        if (characterIDComponent == currentBlunderIDComponent.get()) {
-            blunder = (GameEntity) character;
-            blundered = (GameEntity) character2;
+        if (characterIDComponent == currentBlunder.get().getComponentUnsafe(IDComponent.class)) {
+            blunder = (GameEntity) primaryEntity;
+            blundered = (GameEntity) secondaryEntity;
         } else {
-            blunder = (GameEntity) character2;
-            blundered = (GameEntity) character;
+            blunder = (GameEntity) secondaryEntity;
+            blundered = (GameEntity) primaryEntity;
         }
 
-        currentBlunderIDComponent.setValue(blundered.getComponentUnsafe(IDComponent.class));
+        if (!potentialBlunderList.contains(blunder) || !potentialBlunderList.contains(blundered)) {
+            return;
+        }
+
+
+        currentBlunder.setValue(blundered);
 
         if (blunder.hasComponent(BotComponent.class)) {
             blunder.getComponentUnsafe(BotComponent.class).makeBotMovingAway();
@@ -63,7 +64,7 @@ public class BlunderManager extends CollisionHandler {
             throw new IllegalStateException("No blunder was defined");
         }
 
-        currentBlunderIDComponent = new SimpleObjectProperty<>(blunder.getComponentUnsafe(IDComponent.class));
+        currentBlunder = new SimpleObjectProperty<>(blunder);
 
         if (blunder.hasComponent(BotComponent.class)) {
             blunder.getComponentUnsafe(BotComponent.class).makeBotProximity();
@@ -80,11 +81,11 @@ public class BlunderManager extends CollisionHandler {
         }
     }
 
-    public IDComponent getCurrentBlunderIDComponent() {
-        return currentBlunderIDComponent.get();
+    public GameEntity getCurrentBlunder() {
+        return currentBlunder.get();
     }
 
-    public ObjectProperty<IDComponent> getCurrentBlunderIDComponentProperty() {
-        return currentBlunderIDComponent;
+    public ObjectProperty<GameEntity> getCurrentBlunderProperty() {
+        return currentBlunder;
     }
 }
