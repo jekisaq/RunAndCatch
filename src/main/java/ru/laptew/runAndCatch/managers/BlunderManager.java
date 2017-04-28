@@ -46,16 +46,16 @@ public class BlunderManager extends CollisionHandler {
 
         currentBlunderIDComponent.setValue(blunderedIDComponent);
 
-        BotComponent botComponent = blunderIDComponent.getEntity().getComponentUnsafe(BotComponent.class);
-        if (botComponent != null) {
-            botComponent.makeBotMovingAway();
-        } else {
-            botComponent = character2.getComponentUnsafe(BotComponent.class);
-            if (botComponent != null) {
-                botComponent.makeBotProximity();
-            }
 
+        if (blunderIDComponent.getEntity().hasComponent(BotComponent.class)) {
+            BotComponent botComponent = blunderIDComponent.getEntity().getComponentUnsafe(BotComponent.class);
+            botComponent.makeBotMovingAway();
+        } else if (character2.hasComponent(BotComponent.class)) {
+            BotComponent botComponent = character2.getComponentUnsafe(BotComponent.class);
+            botComponent.makeBotProximity();
         }
+
+
     }
 
     public void defineBlunder() {

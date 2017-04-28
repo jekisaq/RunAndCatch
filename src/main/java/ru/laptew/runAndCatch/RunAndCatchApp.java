@@ -7,6 +7,7 @@ import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.EntityView;
 import com.almasb.fxgl.entity.GameEntity;
+import com.almasb.fxgl.entity.component.IDComponent;
 import com.almasb.fxgl.input.InputMapping;
 import com.almasb.fxgl.service.Input;
 import com.almasb.fxgl.settings.GameSettings;
@@ -20,7 +21,7 @@ import ru.laptew.runAndCatch.component.BotComponent;
 import ru.laptew.runAndCatch.control.CharacterControl;
 import ru.laptew.runAndCatch.managers.BlunderManager;
 
-import java.util.Map;
+import java.util.*;
 
 public class RunAndCatchApp extends GameApplication {
     private CharacterControl playerControl;
@@ -123,18 +124,26 @@ public class RunAndCatchApp extends GameApplication {
     private void spawnPlayer() {
         player = (GameEntity) getGameWorld().spawn("dawn", getWidth() / 2 - getWidth() / 4, getHeight() / 2);
         playerControl = player.getControlUnsafe(CharacterControl.class);
+        addToStatistics(player);
     }
 
     private void spawnRival() {
         rival = (GameEntity) getGameWorld().spawn("policeman", getWidth() / 2 + getWidth() / 4, getHeight() / 2);
         rivalControl = rival.getControlUnsafe(CharacterControl.class);
         rival.addComponent(new BotComponent(player));
+        addToStatistics(player);
+    }
+
+    private void addToStatistics(GameEntity player) {
+        HashMap<Integer, List<Integer>> statistics = getGameState().getObject("statistics");
+        statistics.put(player.getComponentUnsafe(IDComponent.class).getID(), new LinkedList<>());
     }
 
     @Override
     protected void initGameVars(Map<String, Object> vars) {
         vars.put("isPaused", false);
-        vars.put("time", 180);
+        vars.put("time", 10);
+        vars.put("statistics", new HashMap<Integer, List<Integer>>());
     }
 
     @Override
@@ -161,6 +170,13 @@ public class RunAndCatchApp extends GameApplication {
         getGameScene().addUINode(uiBlunder);
         getGameScene().addUINode(uiPause);
         getGameScene().addUINode(uiTime);
+    }
+
+    @Override
+    protected void onPostUpdate(double tpf) {
+        if (getGameState().getInt("time") <= 0) {
+            getDisplay().showMessageBox("Игра окончена!", this::exit);
+        }
     }
 
     public static void main(String[] args) {
